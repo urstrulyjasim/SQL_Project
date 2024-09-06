@@ -1,0 +1,245 @@
+-- Create Drivers table
+CREATE DATABASE TrafficManagementSystem
+CREATE TABLE Drivers (
+    DriverID INT PRIMARY KEY IDENTITY (1,1)NOT NULL,
+    Name VARCHAR(100) NOT NULL,
+    License_Number VARCHAR(20) NOT NULL,
+    Contact_Info VARCHAR(50)
+);
+
+-- Insert data into Drivers table
+INSERT INTO Drivers (Name, License_Number, Contact_Info) VALUES
+('Ashraf', 'DK87912345', '01846435425'),
+('Saif', 'NK78547890', '01756786512'),
+('Rahi', 'SYL5624680', '01612786545'),
+('Shawon', 'DP457813579', '01578962545'),
+('Tareq', 'LP754197531', '01956478523');
+SELECT *FROM Drivers;
+-- Create Vehicles table
+CREATE TABLE Vehicles (
+    VehicleID INT PRIMARY KEY IDENTITY(1,1) NOT NULL ,
+    DriverID INT  NOT NULL,
+    Brand VARCHAR(50),
+    Model VARCHAR(50) NOT NULL,
+    Registration_Number VARCHAR(20) NOT NULL ,
+    FOREIGN KEY (DriverID) REFERENCES Drivers(DriverID)
+);
+
+-- Insert data into Vehicles table
+INSERT INTO Vehicles (DriverID,Brand, Model, Registration_Number) VALUES
+(1,'Toyota', 'Corrola', 'DHAKA-KHA-74154'),
+(2,'Honda', 'Civic', 'CTG-GA-12424'),
+(3,'Ford', 'Focus', 'RAJSHAHI-HA-78913'),
+(4,'Chevrolet', 'Malibu', 'SYLHET-CHA-84234'),
+(5,'BMW', 'X5', 'KHULNA-FA-14524');
+
+-- Create Roads table
+CREATE TABLE Roads (
+    RoadID INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
+    Name VARCHAR(100) NOT NULL,
+    Location VARCHAR(100)
+);
+
+-- Insert data into Roads table
+INSERT INTO Roads (Name, Location) VALUES
+('Bohaddarhat', 'City Center'),
+('Gulshan', 'Suburb'),
+('Dhanmondi', 'Downtown'),
+('Agrabad', 'Industrial'),
+('Nasirabad', 'Residential');
+
+-- Create Traffic_Signals table
+CREATE TABLE Traffic_Signals (
+    SignalID INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
+    RoadID INT  NOT NULL,
+    Status VARCHAR(20),
+    FOREIGN KEY (RoadID) REFERENCES Roads(RoadID)
+);
+
+-- Insert data into Traffic_Signals table
+INSERT INTO Traffic_Signals (RoadID,Status) VALUES
+(1, 'Green'),
+(2, 'Red'),
+(3, 'Yellow'),
+(4, 'Green'),
+(5, 'Red');
+
+-- Create Traffic_Lanes table
+CREATE TABLE Traffic_Lanes (
+    LaneID INT PRIMARY KEY,
+    RoadID INT,
+    Lane_Number INT,
+    Lane_Type VARCHAR(20),
+    FOREIGN KEY (RoadID) REFERENCES Roads(RoadID)
+);
+
+-- Insert data into Traffic_Lanes table
+INSERT INTO Traffic_Lanes (LaneID, RoadID, Lane_Number, Lane_Type) VALUES
+(1, 1, 1, 'Fast'),
+(2, 1, 2, 'Slow'),
+(3, 2, 1, 'Fast'),
+(4, 2, 2, 'Slow'),
+(5, 3, 1, 'Fast');
+
+-- Create Traffic_Flow table
+CREATE TABLE Traffic_Flow (
+    FlowID INT PRIMARY KEY,
+    LaneID INT,
+    VehicleID INT,
+    Speed INT,
+    Timestamp DATETIME,
+    FOREIGN KEY (LaneID) REFERENCES Traffic_Lanes(LaneID),
+    FOREIGN KEY (VehicleID) REFERENCES Vehicles(VehicleID)
+);
+
+-- Insert data into Traffic_Flow table
+INSERT INTO Traffic_Flow (FlowID, LaneID, VehicleID, Speed, Timestamp) VALUES
+(1, 1, 1, 60, '2024-05-12 08:00:00'),
+(2, 2, 2, 40, '2024-05-12 08:02:00'),
+(3, 3, 3, 55, '2024-05-12 08:05:00'),
+(4, 4, 4, 45, '2024-05-12 08:10:00'),
+(5, 5, 5, 65, '2024-05-12 08:15:00');
+
+-- Create Traffic_Violations table
+CREATE TABLE Traffic_Violations (
+    ViolationID INT PRIMARY KEY,
+    VehicleID INT,
+    Description VARCHAR(100),
+    Date_Time DATETIME,
+    Fine_Amount INT,
+    FOREIGN KEY (VehicleID) REFERENCES Vehicles(VehicleID)
+);
+
+-- Insert data into Traffic_Violations table
+INSERT INTO Traffic_Violations (ViolationID, VehicleID, Description, Date_Time, Fine_Amount) VALUES
+(1, 1, 'Speeding', '2024-05-12 08:30:00', 50),
+(2, 2, 'Wrong Rute', '2024-05-12 08:35:00', 100),
+(3, 3, 'Illegal Parking', '2024-05-12 08:40:00', 75),
+(4, 4, 'No Seatbelt', '2024-05-12 08:45:00', 25),
+(5, 5, 'Using Mobile Phone', '2024-05-12 08:50:00', 60);
+SELECT * FROM Traffic_Violations;
+-- Create Traffic_Police table
+CREATE TABLE Traffic_Police (
+    PoliceID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Badge_Number VARCHAR(20),
+    Contact_Info VARCHAR(50)
+);
+
+-- Insert data into Traffic_Police table
+INSERT INTO Traffic_Police (PoliceID, Name, Badge_Number, Contact_Info) VALUES
+(1, 'Abdur Rahman', '123456', '01956781423'),
+(2, 'Abdur Rahim', '789012', '01828735782'),
+(3, 'Abdul Gafur', '345678', '01783187321'),
+(4, 'Abdur Razzak', '901234', '01632781428'),
+(5, 'Abdul Malik', '567890', '01893147368');
+
+-- Create Accidents table
+CREATE TABLE Accidents (
+    AccidentID INT PRIMARY KEY,
+    RoadID INT,
+    LaneID INT,
+    VehicleID1 INT,
+    VehicleID2 INT,
+    Description VARCHAR(100),
+    Date_Time DATETIME,
+    FOREIGN KEY (RoadID) REFERENCES Roads(RoadID),
+    FOREIGN KEY (LaneID) REFERENCES Traffic_Lanes(LaneID),
+    FOREIGN KEY (VehicleID1) REFERENCES Vehicles(VehicleID),
+    FOREIGN KEY (VehicleID2) REFERENCES Vehicles(VehicleID)
+);
+
+-- Insert data into Accidents table
+INSERT INTO Accidents (AccidentID, RoadID, LaneID, VehicleID1, VehicleID2, Description, Date_Time) VALUES
+(1, 1, 1, 1, 2, 'Hit Pedestrian', '2024-05-12 09:00:00'),
+(2, 2, 2, 3, 4, 'Rear end Collision', '2024-05-12 09:10:00'),
+(3, 3, 1, 5, 1, 'Side Impact Accidents', '2024-05-12 09:20:00'),
+(4, 4, 2, 2, 3, 'Head On Collision', '2024-05-12 09:30:00'),
+(5, 5, 1, 4, 5, 'Hit and run', '2024-05-12 09:40:00');
+
+-- Create Traffic_Camera table
+CREATE TABLE Traffic_Camera (
+    CameraID INT PRIMARY KEY,
+    RoadID INT,
+    Location VARCHAR(100),
+    Status VARCHAR(20)
+);
+
+-- Insert data into Traffic_Camera table
+INSERT INTO Traffic_Camera (CameraID, RoadID, Location, Status) VALUES
+(1, 1, 'Intersection1', 'Working'),
+(2, 2, 'Intersection2', 'Under Maintenance'),
+(3, 3, 'Intersection3', 'Working'),
+(4, 4, 'Intersection4', 'Working'),
+(5, 5, 'Intersection5', 'Working');
+SELECT * FROM Drivers;
+SELECT * FROM Vehicles;
+SELECT * FROM Roads;
+SELECT * FROM Traffic_Signals;
+SELECT * FROM Traffic_Lanes;
+SELECT * FROM Traffic_Flow;
+SELECT * FROM Traffic_Violations;
+SELECT * FROM Traffic_Police;
+SELECT * FROM Accidents;
+SELECT * FROM Traffic_Camera;
+
+
+
+SELECT * FROM Drivers WHERE DriverID = 1;
+SELECT * FROM Vehicles WHERE Registration_Number = 'DHAKA-KHA-74154';
+SELECT * FROM Traffic_Police WHERE Name = 'Abdur Rahman';
+
+
+SELECT * FROM Vehicles v
+JOIN Drivers d ON v.DriverID = d.DriverID
+WHERE v.VehicleID = 1;
+
+
+SELECT * FROM Vehicles v
+JOIN Drivers d ON v.DriverID = d.DriverID;
+
+SELECT * FROM Traffic_Flow tf
+JOIN Traffic_Lanes tl ON tf.LaneID = tl.LaneID;
+
+
+SELECT * FROM Traffic_Violations WHERE Date_Time = '2024-05-12';
+
+
+
+SELECT * FROM Accidents WHERE Date_Time BETWEEN '2024-05-12 09:00:00' AND '2024-05-12 09:30:00';
+
+
+
+SELECT * FROM Traffic_Violations WHERE Fine_Amount = 50;
+
+
+
+SELECT * FROM Traffic_Violations WHERE Date_Time = '2024-05-12' AND Fine_Amount = 50;
+
+
+
+SELECT MAX(Speed) AS Max_Speed FROM Traffic_Flow;
+SELECT MIN(Speed) AS Min_Speed FROM Traffic_Flow;
+
+
+
+SELECT * FROM Vehicles ORDER BY Brand ASC;
+
+
+
+UPDATE Vehicles
+SET Brand = 'Toyota', Model = 'Camry'
+WHERE VehicleID = 1;
+
+
+SELECT COUNT(*) AS Total_Drivers FROM Drivers;
+SELECT COUNT(*) AS Total_Vehicles FROM Vehicles;
+
+
+
+SELECT * FROM Drivers WHERE Name LIKE '%Ashraf%';
+
+
+
+INSERT INTO Drivers (Name, License_Number, Contact_Info)
+VALUES ('Shawqi', 'CTG123456', '01334567894');
